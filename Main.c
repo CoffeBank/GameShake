@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <conio.h>
 #include <locale.h>
+#include <windows.h>
 
 //введем переменную отвечающие за начало и конец игры
 int stopgame;
@@ -42,6 +43,15 @@ int quantity = 0;
 
 //присвоим значение количеству очков в игре начиная с нуля
 int score = 0;
+
+void gotoxy(int x, int y)
+{
+  static HANDLE h = NULL;  
+  if(!h)
+    h = GetStdHandle(STD_OUTPUT_HANDLE);
+  COORD c = { x, y };  
+  SetConsoleCursorPosition(h,c);
+}
 
 //функция отвечающая за логику игры
 void logic()
@@ -159,26 +169,43 @@ void setup()
 	//пусть голова будет расположена на середине поля
 	x = width / 2 - 1;
 	y = height / 2 - 1;
-}
-
-//функция отвечающая за обновление терминала и его рисовку
-void draw()
-{
-	//очищает рабочую область консоли
-	system("@cls||clear");
 
 	//рисуем верхнюю границу 
 	for (int i = 0; i <= width+1; i++)
 		printf("#");
 	printf("\n");
-
-	//строим боковые границы, не включаю первую и последнюю строку
 	for (int i = 0; i < height; i++)
 	{
 		for (int j = 0; j <= width; j++)
 		{
 			if (j == 0 || j == width)
 				printf("#");
+		}
+		printf("\n");
+	}
+	gotoxy(0,21);
+	//строим нижнюю границу
+	for (int i = 0; i <= width + 1; i++)
+		printf("#");
+
+	//вывод значении нынешних очков и лучшего результата
+	//printf("\nscore:%d", score);
+	printf("\nbestscore:%d", bestscore);
+	gotoxy(0, 1);
+}
+
+//функция отвечающая за обновление терминала и его рисовку
+void draw()
+{
+	//строим боковые границы, не включаю первую и последнюю строку
+	for (int i = 0; i < height; i++)
+	{
+		for (int j = 0; j <= width; j++)
+		{
+			/*
+			if (j == 0 || j == width)
+				printf("#");
+			*/
 			//рисовка головы змейки
 			if (i == y && j == x)
 				printf("0");
@@ -207,13 +234,7 @@ void draw()
 		}
 		printf("\n");
 	}
-
-	//строим нижнюю границу
-	for (int i = 0; i <= width + 1; i++)
-		printf("#");
-	//вывод значении нынешних очков и лучшего результата
-	printf("\nscore:%d", score);
-	printf("\nbestscore:%d", bestscore);
+	gotoxy(0, 1);
 }
 
 //функция принимающая значения пользователя
